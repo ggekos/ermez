@@ -1,0 +1,52 @@
+services:
+    mercure_server:
+        container_name: mercure_server
+        image: dunglas/mercure
+        restart: unless-stopped
+        environment:
+            SERVER_NAME: ':80'
+            MERCURE_PUBLISHER_JWT_KEY: ${MERCURE_JWT_KEY}
+        command: /usr/bin/caddy run --config /etc/caddy/Caddyfile.dev
+        volumes:
+            - caddy_data:/data
+            - caddy_config:/config
+    
+    mercure_producer:
+        container_name: mercure_producer
+        build: 
+            context: $PWD/producer/mercure/
+            dockerfile: $PWD/producer/mercure/Dockerfile
+        environment:
+            - MERCURE_URL=http://mercure_server/.well-known/mercure
+            - MERCURE_JWT=${MERCURE_JWT}
+        volumes:
+            - $PWD/producer/mercure:/home/app
+
+    pulsar_server:
+        container_name: pulsar_server
+        command: bin/pulsar standalone
+        image: apachepulsar/pulsar:2.7.0
+        volumes:
+            - $PWD/pulsar/conf/standalone.conf:/pulsar/conf/standalone.conf
+            - $PWD/pulsar/conf/my-secret.key:/pulsar/conf/my-secret.key
+            - $PWD/pulsar/data
+            - pulsar_data:/pulsar/data
+
+    etlm:
+        build: .
+        volumes:
+            - $PWD/etlm:/home/app/etlm
+        environment:
+            - PYTHONPATH=/home/app
+            - CONNEXION_STRING_FROM=http://mercure_server/.well-known/mercure?topic=test
+            - CREDENTIALS_FROM=${MERCURE_JWT}
+            - CONNEXION_STRING_TO=pulsar://pulsar_server:6650
+            - CREDENTIALS_TO=${PULSAR_JWT}
+        depends_on: 
+            - mercure_server
+            - pulsar_server
+
+volumes:
+    pulsar_data: ~
+    caddy_data: ~
+    caddy_config: ~

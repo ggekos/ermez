@@ -1,0 +1,2 @@
+pymercure==0.0.1.0
+websocket-client==1.0.1
