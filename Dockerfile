@@ -1,4 +1,4 @@
-FROM python:3.10-rc
+FROM python:3.8.8
 
 RUN apt-get -y update
 
@@ -8,6 +8,7 @@ COPY requirements.txt requirements.txt
 
 RUN pip3 install -r requirements.txt
 
+ENV PYTHONPATH /home/app
 ENV PYTHONUNBUFFERED definitely
 
 CMD ["python3", "etlm/main.py"]

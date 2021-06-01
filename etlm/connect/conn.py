@@ -5,8 +5,6 @@ class conn:
         self.type = type
         self.protocol = self.determine_broker_from_uri()
 
-        print("test connexion for " + self.protocol)
-
         if self.protocol == "http":
             self.connect_with_http()
 
@@ -39,7 +37,9 @@ class conn:
             self.consumer = pulsar_consumer.mercure_consumer(self.uri, self.credentials)
 
         if self.type == "producer":
-            self.producer = None
+            from etlm.connect.pulsar import pulsar_producer
+
+            self.producer = pulsar_producer.pulsar_producer(self.uri, self.credentials)
 
     def get_message(self):
         return self.consumer.get_message()

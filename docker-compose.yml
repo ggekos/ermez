@@ -37,11 +37,11 @@ services:
         volumes:
             - $PWD/etlm:/home/app/etlm
         environment:
-            - PYTHONPATH=/home/app
             - CONNEXION_STRING_FROM=http://mercure_server/.well-known/mercure?topic=test
             - CREDENTIALS_FROM=${MERCURE_JWT}
-            - CONNEXION_STRING_TO=pulsar://pulsar_server:6650
+            - CONNEXION_STRING_TO=pulsar://pulsar_server:6650/topic
             - CREDENTIALS_TO=${PULSAR_JWT}
+        restart: unless-stopped
         depends_on: 
             - mercure_server
             - pulsar_server

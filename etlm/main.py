@@ -1,4 +1,4 @@
-import os, time
+import os
 from etlm.connect import conn
 
 consumer = conn.conn(
@@ -9,5 +9,4 @@ producer = conn.conn(
 )
 
 for message in consumer.get_message():
-    print(message)
-    # producer.publish_message(message)
+    producer.publish_message(message)
