@@ -1,7 +1,7 @@
 import pulsar
 from urllib.parse import urlparse
 
-class pulsar_producer:
+class Producer:
     def __init__(self, uri: str, credential:str):
         uri_parsed = urlparse(uri)
 

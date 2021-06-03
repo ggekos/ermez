@@ -1,8 +1,8 @@
 import sseclient, requests
 
 
-class mercure_consumer:
-    def __init__(self, uri, credential):
+class Consumer:
+    def __init__(self, uri: str, credential):
         print("try connecting to ", uri, credential)
         headers = {
             "Accept": "text/event-stream",

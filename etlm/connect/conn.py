@@ -1,45 +1,40 @@
+from typing import Union
+from urllib.parse import urlparse
+from importlib import import_module
+
 class conn:
-    def __init__(self, uri: str, credentials: str, type: str) -> None:
+    def __init__(self, uri: str, credentials: Union[str, None], type: str) -> None:
         self.uri = uri
+        self.uri_parsed = urlparse(uri)
         self.credentials = credentials
         self.type = type
         self.protocol = self.determine_broker_from_uri()
 
-        if self.protocol == "http":
-            self.connect_with_http()
-
-        if self.protocol == "pulsar":
-            self.connect_with_pulsar()
-
-    def determine_broker_from_uri(self) -> str:
-        protocol = self.uri.split(":")
-
-        if len(protocol[0]) == 0 or protocol[0] not in ["http", "pulsar"]:
-            raise Exception("Connexion error")
-
-        return protocol[0]
-
-    def connect_with_http(self):
         if self.type == "consumer":
-            from etlm.connect.mercure import mercure_consumer
+            consumer = import_module("etlm.connect." + self.protocol + "." + self.protocol + "_consumer")
 
-            self.consumer = mercure_consumer.mercure_consumer(
-                self.uri, self.credentials
+            self.consumer = consumer.Consumer(
+                self.uri,self.credentials
             )
 
         if self.type == "producer":
-            self.producer = None
+            producer = import_module("etlm.connect." + self.protocol + "." + self.protocol + "_producer")
 
-    def connect_with_pulsar(self):
-        if self.type == "consumer":
-            from etlm.connect.pulsar import pulsar_consumer
+            self.producer = producer.Producer(self.uri,self.credentials)
 
-            self.consumer = pulsar_consumer.mercure_consumer(self.uri, self.credentials)
+    def determine_broker_from_uri(self) -> str:
+        protocol = self.uri_parsed.scheme
 
-        if self.type == "producer":
-            from etlm.connect.pulsar import pulsar_producer
+        if len(protocol) == 0 or protocol not in ["http", "pulsar", "amqp"]:
+            raise Exception("Connexion error")
 
-            self.producer = pulsar_producer.pulsar_producer(self.uri, self.credentials)
+        if protocol == "http":
+            protocol = "mercure"
+
+        if protocol == "amqp":
+            protocol = "rabbitmq"
+
+        return protocol
 
     def get_message(self):
         return self.consumer.get_message()

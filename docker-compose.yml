@@ -32,6 +32,17 @@ services:
             - $PWD/pulsar/data
             - pulsar_data:/pulsar/data
 
+    rabbitmq_server:
+        container_name: rabbitmq_server
+        image: rabbitmq:3-management
+        ports:
+            - 15672:15672
+        environment: 
+            RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: -rabbitmq_management load_definitions "/tmp/rabbit.definitions.json"
+        volumes:
+            - $PWD/rabbitmq/conf/rabbit.definitions.json:/tmp/rabbit.definitions.json
+            - rabbitmq_data:/data
+
     etlm:
         build: .
         volumes:
@@ -39,14 +50,17 @@ services:
         environment:
             - CONNEXION_STRING_FROM=http://mercure_server/.well-known/mercure?topic=test
             - CREDENTIALS_FROM=${MERCURE_JWT}
-            - CONNEXION_STRING_TO=pulsar://pulsar_server:6650/topic
-            - CREDENTIALS_TO=${PULSAR_JWT}
+            - CONNEXION_STRING_TO=amqp://guest:guest@rabbitmq_server:5672/%2F
+            # - CONNEXION_STRING_TO=pulsar://pulsar_server:6650/topic
+            # - CREDENTIALS_TO=${PULSAR_JWT}
         restart: unless-stopped
         depends_on: 
             - mercure_server
             - pulsar_server
+            - rabbitmq_server
 
 volumes:
     pulsar_data: ~
     caddy_data: ~
     caddy_config: ~
+    rabbitmq_data: ~
