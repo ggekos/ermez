@@ -1,18 +1,23 @@
 import sseclient, requests
+from urllib.parse import urlparse, parse_qs
 
 
 class Consumer:
     def __init__(self, uri: str, credential):
-        print("try connecting to ", uri, credential)
+        self.uri_parsed = urlparse(uri)
+
         headers = {
             "Accept": "text/event-stream",
             "Authorization": str.encode("Bearer " + credential),
         }
+
+        query = parse_qs(self.uri_parsed.query)
+
         response = requests.get(
-            uri,
+            self.uri_parsed.scheme + "://" + self.uri_parsed.netloc + self.uri_parsed.path,
             stream=True,
             headers=headers,
-            params={"topic": ["*"]},
+            params={"topic": [query["topic"][0]]},
         )
         self.client = sseclient.SSEClient(response)
 

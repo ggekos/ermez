@@ -1,15 +1,19 @@
 import pulsar
+from urllib.parse import urlparse
 
 
-class pulsar_consumer:
-    def __init__(self, uri, credential):
-        print("try connecting to ", uri, credential)
+class Consumer:
+    def __init__(self, uri: str, credential):
+        uri_parsed = urlparse(uri)
 
         self.client = pulsar.Client(
-            uri,
-            authentication=pulsar.AuthenticationToken(credential),
+            uri_parsed.scheme + "://" + uri_parsed.netloc,
+            authentication=pulsar.AuthenticationToken(str(credential)),
         )
 
+        self.consumer = self.client.subscribe(uri_parsed.path[1:], subscription_name=uri_parsed.path[1:])
+
     def get_message(self):
-        for event in self.client.events():
-            yield event.data
+        while True:
+            msg = self.consumer.receive()
+            yield msg.data()

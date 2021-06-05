@@ -11,16 +11,21 @@ services:
             - caddy_data:/data
             - caddy_config:/config
     
-    mercure_producer:
-        container_name: mercure_producer
+    producer:
+        container_name: producer
         build: 
-            context: $PWD/producer/mercure/
-            dockerfile: $PWD/producer/mercure/Dockerfile
+            context: $PWD/producer/
+            dockerfile: $PWD/producer/Dockerfile
+        restart: unless-stopped
         environment:
-            - MERCURE_URL=http://mercure_server/.well-known/mercure
+            - PRODUCE=rabbitmq
+            - MERCURE_URL=${MERCURE_URL}
             - MERCURE_JWT=${MERCURE_JWT}
+            - PULSAR_URL=${PULSAR_URL}
+            - PULSAR_JWT=${PULSAR_JWT}
+            - RABBITMQ_URL=${RABBITMQ_URL}
         volumes:
-            - $PWD/producer/mercure:/home/app
+            - $PWD/producer:/home/app
 
     pulsar_server:
         container_name: pulsar_server
@@ -48,11 +53,13 @@ services:
         volumes:
             - $PWD/etlm:/home/app/etlm
         environment:
-            - CONNEXION_STRING_FROM=http://mercure_server/.well-known/mercure?topic=test
-            - CREDENTIALS_FROM=${MERCURE_JWT}
-            - CONNEXION_STRING_TO=amqp://guest:guest@rabbitmq_server:5672/%2F
-            # - CONNEXION_STRING_TO=pulsar://pulsar_server:6650/topic
-            # - CREDENTIALS_TO=${PULSAR_JWT}
+            - CONNEXION_STRING_TO=${MERCURE_URL}
+            - CREDENTIALS_TO=${MERCURE_JWT}
+
+            # - CONNEXION_STRING_FROM=${PULSAR_URL}
+            # - CREDENTIALS_FROM=${PULSAR_JWT}
+
+            - CONNEXION_STRING_FROM=${RABBITMQ_URL}
         restart: unless-stopped
         depends_on: 
             - mercure_server
