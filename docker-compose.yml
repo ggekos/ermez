@@ -48,10 +48,10 @@ services:
             - $PWD/rabbitmq/conf/rabbit.definitions.json:/tmp/rabbit.definitions.json
             - rabbitmq_data:/data
 
-    etlm:
+    ermez:
         build: .
         volumes:
-            - $PWD/etlm:/home/app/etlm
+            - $PWD/ermez:/home/app/ermez
         environment:
             - CONNEXION_STRING_TO=${MERCURE_URL}
             - CREDENTIALS_TO=${MERCURE_JWT}

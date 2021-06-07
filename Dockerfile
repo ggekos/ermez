@@ -11,4 +11,4 @@ RUN pip3 install -r requirements.txt
 ENV PYTHONPATH /home/app
 ENV PYTHONUNBUFFERED definitely
 
-CMD ["python3", "-u", "etlm/main.py"]
+CMD ["python3", "-u", "ermez/main.py"]

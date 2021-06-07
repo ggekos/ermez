@@ -2,6 +2,7 @@ from typing import Union
 from urllib.parse import urlparse
 from importlib import import_module
 
+
 class conn:
     def __init__(self, uri: str, credentials: Union[str, None], type: str) -> None:
         self.uri = uri
@@ -11,16 +12,18 @@ class conn:
         self.protocol = self.determine_broker_from_uri()
 
         if self.type == "consumer":
-            consumer = import_module("etlm.connect." + self.protocol + "." + self.protocol + "_consumer")
-
-            self.consumer = consumer.Consumer(
-                self.uri,self.credentials
+            consumer = import_module(
+                "ermez.connect." + self.protocol + "." + self.protocol + "_consumer"
             )
 
-        if self.type == "producer":
-            producer = import_module("etlm.connect." + self.protocol + "." + self.protocol + "_producer")
+            self.consumer = consumer.Consumer(self.uri, self.credentials)
 
-            self.producer = producer.Producer(self.uri,self.credentials)
+        if self.type == "producer":
+            producer = import_module(
+                "ermez.connect." + self.protocol + "." + self.protocol + "_producer"
+            )
+
+            self.producer = producer.Producer(self.uri, self.credentials)
 
     def determine_broker_from_uri(self) -> str:
         protocol = self.uri_parsed.scheme
