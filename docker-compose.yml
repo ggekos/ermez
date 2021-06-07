@@ -18,7 +18,7 @@ services:
             dockerfile: $PWD/producer/Dockerfile
         restart: unless-stopped
         environment:
-            - PRODUCE=rabbitmq
+            - PRODUCE=pulsar
             - MERCURE_URL=${MERCURE_URL}
             - MERCURE_JWT=${MERCURE_JWT}
             - PULSAR_URL=${PULSAR_URL}
@@ -56,10 +56,10 @@ services:
             - CONNEXION_STRING_TO=${MERCURE_URL}
             - CREDENTIALS_TO=${MERCURE_JWT}
 
-            # - CONNEXION_STRING_FROM=${PULSAR_URL}
-            # - CREDENTIALS_FROM=${PULSAR_JWT}
+            - CONNEXION_STRING_FROM=${PULSAR_URL}
+            - CREDENTIALS_FROM=${PULSAR_JWT}
 
-            - CONNEXION_STRING_FROM=${RABBITMQ_URL}
+            # - CONNEXION_STRING_FROM=${RABBITMQ_URL}
         restart: unless-stopped
         depends_on: 
             - mercure_server

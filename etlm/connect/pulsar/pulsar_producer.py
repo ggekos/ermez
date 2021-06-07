@@ -1,16 +1,18 @@
 import pulsar
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qs
+
 
 class Producer:
-    def __init__(self, uri: str, credential:str):
+    def __init__(self, uri: str, credential: str):
         uri_parsed = urlparse(uri)
+        query = parse_qs(uri_parsed.query)
 
         self.client = pulsar.Client(
             uri_parsed.scheme + "://" + uri_parsed.netloc,
             authentication=pulsar.AuthenticationToken(str(credential)),
         )
 
-        self.producer = self.client.create_producer(uri_parsed.path[1:])
+        self.producer = self.client.create_producer(query["topic"][0])
 
     def publish_message(self, message):
-        self.producer.send(message.encode('utf-8'))
+        self.producer.send(message.encode("utf-8"))

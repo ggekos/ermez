@@ -3,29 +3,35 @@ import pulsar
 import pika
 from pymercure.publisher.sync import SyncPublisher
 from pymercure.message import Message
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qs
+
 
 def producer_pulsar():
     uri_parsed = urlparse(os.environ["PULSAR_URL"])
+    query = parse_qs(uri_parsed.query)
     client = pulsar.Client(
         uri_parsed.scheme + "://" + uri_parsed.netloc,
         authentication=pulsar.AuthenticationToken(str(os.environ["PULSAR_JWT"])),
     )
 
-    producer = client.create_producer(uri_parsed.path[1:])
+    producer = client.create_producer(query["topic"][0])
 
     i = 0
 
     while True:
         msg = "test : " + str(i)
-        producer.send(msg.encode('utf-8'))
+        producer.send(msg.encode("utf-8"))
         print("message produce: " + str(i))
         i = i + 1
         time.sleep(10)
 
 
 def producer_rabbitmq():
-    parameters = pika.URLParameters(os.environ["RABBITMQ_URL"])
+    uri_parsed = urlparse(os.environ["RABBITMQ_URL"])
+    query = parse_qs(uri_parsed.query)
+    parameters = pika.URLParameters(
+        uri_parsed.scheme + "://" + uri_parsed.netloc + uri_parsed.path
+    )
 
     connection = pika.BlockingConnection(parameters)
 
@@ -35,12 +41,13 @@ def producer_rabbitmq():
 
     while True:
         message = "test : " + str(i)
-        
-        client.basic_publish('test',
-                    'test',
-                    message.encode('utf-8'),
-                    pika.BasicProperties(content_type='text/plain',
-                                        delivery_mode=1))
+
+        client.basic_publish(
+            query["exchange"][0],
+            query["routing_key"][0],
+            message.encode("utf-8"),
+            pika.BasicProperties(content_type="text/plain", delivery_mode=1),
+        )
         print("message produce: " + str(i))
         i = i + 1
         time.sleep(10)
@@ -61,5 +68,6 @@ def producer_mercure():
         i = i + 1
         time.sleep(10)
 
+
 print("start produce message")
-locals()["producer_"+os.environ["PRODUCE"]]()
+locals()["producer_" + os.environ["PRODUCE"]]()

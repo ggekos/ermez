@@ -14,7 +14,10 @@ class Consumer:
         query = parse_qs(self.uri_parsed.query)
 
         response = requests.get(
-            self.uri_parsed.scheme + "://" + self.uri_parsed.netloc + self.uri_parsed.path,
+            self.uri_parsed.scheme
+            + "://"
+            + self.uri_parsed.netloc
+            + self.uri_parsed.path,
             stream=True,
             headers=headers,
             params={"topic": [query["topic"][0]]},
