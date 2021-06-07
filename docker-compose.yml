@@ -49,7 +49,9 @@ services:
             - rabbitmq_data:/data
 
     ermez:
-        build: .
+        build:
+            context: .
+            dockerfile: Dockerfile.dev
         volumes:
             - $PWD/ermez:/home/app/ermez
         environment:
