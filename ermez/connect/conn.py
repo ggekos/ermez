@@ -29,7 +29,7 @@ class conn:
         protocol = self.uri_parsed.scheme
 
         if len(protocol) == 0 or protocol not in ["http", "pulsar", "amqp"]:
-            raise Exception("Connexion error")
+            raise Exception("Connection error")
 
         if protocol == "http":
             protocol = "mercure"

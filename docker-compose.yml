@@ -55,13 +55,13 @@ services:
         volumes:
             - $PWD/ermez:/home/app/ermez
         environment:
-            - CONNEXION_STRING_TO=${MERCURE_URL}
+            - CONNECTION_STRING_TO=${MERCURE_URL}
             - CREDENTIALS_TO=${MERCURE_JWT}
 
-            - CONNEXION_STRING_FROM=${PULSAR_URL}
+            - CONNECTION_STRING_FROM=${PULSAR_URL}
             - CREDENTIALS_FROM=${PULSAR_JWT}
 
-            # - CONNEXION_STRING_FROM=${RABBITMQ_URL}
+            # - CONNECTION_STRING_FROM=${RABBITMQ_URL}
         restart: unless-stopped
         depends_on: 
             - mercure_server

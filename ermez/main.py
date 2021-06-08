@@ -6,11 +6,11 @@ logging.basicConfig(level=os.getenv("LOGLEVEL", "INFO"))
 
 logging.info("Init consumer")
 consumer = conn.conn(
-    os.getenv("CONNEXION_STRING_FROM"), os.getenv("CREDENTIALS_FROM", None), "consumer"
+    os.getenv("CONNECTION_STRING_FROM"), os.getenv("CREDENTIALS_FROM", None), "consumer"
 )
 logging.info("Init producer")
 producer = conn.conn(
-    os.getenv("CONNEXION_STRING_TO"), os.getenv("CREDENTIALS_TO", None), "producer"
+    os.getenv("CONNECTION_STRING_TO"), os.getenv("CREDENTIALS_TO", None), "producer"
 )
 
 for message in consumer.get_message():

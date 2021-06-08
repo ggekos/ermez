@@ -1,9 +1,15 @@
 # ermez
 
-docker to consume and publish.
-Currently supporting : Pulsar (consume/publish, no tls), Mercure (consume, publish), Rabbitmq
+Ermez is message transfer tool. Configure a topic to consume and another one to publish.
+Currently supporting : Pulsar (consume/publish, no tls), Mercure (consume, publish), Rabbitmq (consumer, publish).
 
-Connexion strings :
+### How to use :
+
+```bash
+ docker run -e CONNECTION_STRING_FROM=http://mercure_server/.well-known/mercure?topic=test -e CREDENTIALS_FROM=jwt -e CONNECTION_STRING_TO=amqp://guest:guest@rabbit:5672/%2F?topic=topic&exchange=exchange&routing_key=routing_key ggekos/ermez
+```
+
+### Connection strings :
 
 Mercure : http://mercure_server/.well-known/mercure?topic=test alongside with a jwt
 
@@ -11,23 +17,26 @@ Pulsar : pulsar://pulsar_server:6650?topic=topic alongside with a jwt
 
 Rabbitmq : amqp://guest:guest@rabbit:5672/%2F?topic=topic&exchange=exchange&routing_key=routing_key
 
-## Dev set up
+## Install
 
 copy .env.dist into .env. Fill the value with jwt key and token.
 
-> make install
+```bash
+make install
+```
 
-## dev
+In the docker compose file you can produce dumb message with the producer.
+Change the env var of ermez to test configuration.
 
-> make start
+```bash
+make start
 
-> make stop
-
-## test
-
-> make test
+make stop
+```
 
 ## Todo
+- Error connection
+- Test
 - Add support for SQS
 - Add support for Azure Message Bus
 - Option to ack message
