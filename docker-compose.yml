@@ -6,7 +6,7 @@ services:
             dockerfile: $PWD/producer/Dockerfile
         restart: unless-stopped
         environment:
-            - PRODUCE=sqs
+            - PRODUCE=${PRODUCE}
             - MERCURE_URL=${MERCURE_URL}
             - MERCURE_JWT=${MERCURE_JWT}
             - PULSAR_URL=${PULSAR_URL}
@@ -27,6 +27,8 @@ services:
         volumes:
             - caddy_data:/data
             - caddy_config:/config
+        deploy:
+            replicas: ${MERCURE_SERVER_REPLICAS}
 
     pulsar_server:
         container_name: pulsar_server
@@ -37,6 +39,8 @@ services:
             - $PWD/pulsar/conf/my-secret.key:/pulsar/conf/my-secret.key
             - $PWD/pulsar/data
             - pulsar_data:/pulsar/data
+        deploy:
+            replicas: ${PULSAR_SERVER_REPLICAS}
 
     rabbitmq_server:
         container_name: rabbitmq_server
@@ -48,6 +52,8 @@ services:
         volumes:
             - $PWD/rabbitmq/conf/rabbit.definitions.json:/tmp/rabbit.definitions.json
             - rabbitmq_data:/data
+        deploy:
+            replicas: ${RABBITMQ_SERVER_REPLICAS}
 
     sqs_server:
         # error on boto3 endpoint if using _
@@ -55,6 +61,8 @@ services:
         image: roribio16/alpine-sqs
         ports: 
             - 9325:9325
+        deploy:
+            replicas: ${SQS_SERVER_REPLICAS}
 
     ermez:
         build:
@@ -63,11 +71,11 @@ services:
         volumes:
             - $PWD/ermez:/home/app/ermez
         environment:
-            - CONNECTION_STRING_TO=${MERCURE_URL}
-            - CREDENTIALS_TO=${MERCURE_JWT}
+            - CONNECTION_STRING_TO=${CONNECTION_STRING_TO}
+            - CREDENTIALS_TO=${CREDENTIALS_TO}
 
-            - CONNECTION_STRING_FROM=${PULSAR_URL}
-            - CREDENTIALS_FROM=${PULSAR_JWT}
+            - CONNECTION_STRING_FROM=${CONNECTION_STRING_FROM}
+            - CREDENTIALS_FROM=${CREDENTIALS_FROM}
 
             # - CONNECTION_STRING_FROM=${RABBITMQ_URL}
         restart: unless-stopped
