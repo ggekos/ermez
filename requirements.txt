@@ -2,3 +2,4 @@ pymercure==0.0.1.0
 websocket-client==1.0.1
 pulsar-client==2.7.2
 pika==1.2.0
+boto3==1.17.89

@@ -1,4 +1,21 @@
 services:
+    producer:
+        container_name: producer
+        build: 
+            context: $PWD/producer/
+            dockerfile: $PWD/producer/Dockerfile
+        restart: unless-stopped
+        environment:
+            - PRODUCE=sqs
+            - MERCURE_URL=${MERCURE_URL}
+            - MERCURE_JWT=${MERCURE_JWT}
+            - PULSAR_URL=${PULSAR_URL}
+            - PULSAR_JWT=${PULSAR_JWT}
+            - RABBITMQ_URL=${RABBITMQ_URL}
+            - SQS_URL=${SQS_URL}
+        volumes:
+            - $PWD/producer:/home/app
+
     mercure_server:
         container_name: mercure_server
         image: dunglas/mercure
@@ -10,22 +27,6 @@ services:
         volumes:
             - caddy_data:/data
             - caddy_config:/config
-    
-    producer:
-        container_name: producer
-        build: 
-            context: $PWD/producer/
-            dockerfile: $PWD/producer/Dockerfile
-        restart: unless-stopped
-        environment:
-            - PRODUCE=pulsar
-            - MERCURE_URL=${MERCURE_URL}
-            - MERCURE_JWT=${MERCURE_JWT}
-            - PULSAR_URL=${PULSAR_URL}
-            - PULSAR_JWT=${PULSAR_JWT}
-            - RABBITMQ_URL=${RABBITMQ_URL}
-        volumes:
-            - $PWD/producer:/home/app
 
     pulsar_server:
         container_name: pulsar_server
@@ -48,6 +49,13 @@ services:
             - $PWD/rabbitmq/conf/rabbit.definitions.json:/tmp/rabbit.definitions.json
             - rabbitmq_data:/data
 
+    sqs_server:
+        # error on boto3 endpoint if using _
+        container_name: sqsserver
+        image: roribio16/alpine-sqs
+        ports: 
+            - 9325:9325
+
     ermez:
         build:
             context: .
@@ -63,10 +71,6 @@ services:
 
             # - CONNECTION_STRING_FROM=${RABBITMQ_URL}
         restart: unless-stopped
-        depends_on: 
-            - mercure_server
-            - pulsar_server
-            - rabbitmq_server
 
 volumes:
     pulsar_data: ~

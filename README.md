@@ -1,7 +1,7 @@
 # ermez
 
 Ermez is message transfer tool. Configure a topic to consume and another one to publish.
-Currently supporting : Pulsar (consume/publish, no tls), Mercure (consume, publish), Rabbitmq (consumer, publish).
+Currently supporting : Pulsar (consume/publish, no tls), Mercure (consume, publish), Rabbitmq (consume, publish).
 
 ### How to use :
 
@@ -11,11 +11,16 @@ Currently supporting : Pulsar (consume/publish, no tls), Mercure (consume, publi
 
 ### Connection strings :
 
+Theses connection strings differs from the usual strings used by services.
+
+
 Mercure : http://mercure_server/.well-known/mercure?topic=test alongside with a jwt
 
 Pulsar : pulsar://pulsar_server:6650?topic=topic alongside with a jwt
 
 Rabbitmq : amqp://guest:guest@rabbit:5672/%2F?topic=topic&exchange=exchange&routing_key=routing_key
+
+SQS : http://sqsserver:9324?queue=default alongside with aws credentials
 
 ## Install
 
