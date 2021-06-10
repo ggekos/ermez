@@ -55,15 +55,19 @@ def producer_rabbitmq():
 
 
 def producer_mercure():
+    uri_parsed = urlparse(os.environ["MERCURE_URL"])
+
     publisher = SyncPublisher(
-        os.environ["MERCURE_URL"],
+        uri_parsed.scheme + "://" + uri_parsed.netloc + uri_parsed.path,
         os.environ["MERCURE_JWT"],
     )
+
+    query = parse_qs(uri_parsed.query)
 
     i = 0
 
     while True:
-        msg = Message(["test"], "test : " + str(i))
+        msg = Message([query["topic"][0]], "test : " + str(i))
         publisher.publish(msg)
         print("message produce: " + str(i))
         i = i + 1

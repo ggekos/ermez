@@ -24,9 +24,6 @@ services:
             SERVER_NAME: ':80'
             MERCURE_PUBLISHER_JWT_KEY: ${MERCURE_JWT_KEY}
         command: /usr/bin/caddy run --config /etc/caddy/Caddyfile.dev
-        volumes:
-            - caddy_data:/data
-            - caddy_config:/config
         deploy:
             replicas: ${MERCURE_SERVER_REPLICAS}
 
@@ -37,8 +34,6 @@ services:
         volumes:
             - $PWD/pulsar/conf/standalone.conf:/pulsar/conf/standalone.conf
             - $PWD/pulsar/conf/my-secret.key:/pulsar/conf/my-secret.key
-            - $PWD/pulsar/data
-            - pulsar_data:/pulsar/data
         deploy:
             replicas: ${PULSAR_SERVER_REPLICAS}
 
@@ -51,7 +46,6 @@ services:
             RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: -rabbitmq_management load_definitions "/tmp/rabbit.definitions.json"
         volumes:
             - $PWD/rabbitmq/conf/rabbit.definitions.json:/tmp/rabbit.definitions.json
-            - rabbitmq_data:/data
         deploy:
             replicas: ${RABBITMQ_SERVER_REPLICAS}
 
@@ -79,9 +73,3 @@ services:
 
             # - CONNECTION_STRING_FROM=${RABBITMQ_URL}
         restart: unless-stopped
-
-volumes:
-    pulsar_data: ~
-    caddy_data: ~
-    caddy_config: ~
-    rabbitmq_data: ~

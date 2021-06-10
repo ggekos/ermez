@@ -1,15 +1,21 @@
 from typing import Union
 from urllib.parse import urlparse
 from importlib import import_module
+import logging
+import os
 
 
 class conn:
     def __init__(self, uri: str, credentials: Union[str, None], type: str) -> None:
+        logging.basicConfig(level=os.getenv("LOGLEVEL", "INFO"))
+
         self.uri = uri
         self.uri_parsed = urlparse(uri)
         self.credentials = credentials
         self.type = type
         self.protocol = self.determine_broker_from_uri()
+
+        logging.info("Starting " + type + " " + self.protocol + " " + self.uri)
 
         if self.type == "consumer":
             consumer = import_module(
@@ -25,6 +31,8 @@ class conn:
 
             self.producer = producer.Producer(self.uri, self.credentials)
 
+        logging.info(type + " " + self.protocol + " started")
+
     def determine_broker_from_uri(self) -> str:
         protocol = self.uri_parsed.scheme
 
@@ -32,10 +40,10 @@ class conn:
             raise Exception("Connection error")
 
         if protocol == "http":
-            protocol = "mercure"
+            return "mercure"
 
         if protocol == "amqp":
-            protocol = "rabbitmq"
+            return "rabbitmq"
 
         return protocol
 

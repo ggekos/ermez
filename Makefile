@@ -13,7 +13,7 @@ install:
 
 # call with make start from to
 start:
-	@echo "producer : $(PRODUCER) $(SQS), consumer : $(CONSUMER) "
+	@echo "producer : $(PRODUCER), consumer : $(CONSUMER) "
 
 	sed -i '/SQS_SERVER_REPLICAS/d' .env
 	echo "SQS_SERVER_REPLICAS=0" >> .env
@@ -60,7 +60,7 @@ endif
 
 ifeq (rabbitmq, $(CONSUMER))
 	sed -i '/PRODUCE/d' .env
-	echo "PRODUCE=sqs" >> .env
+	echo "PRODUCE=rabbitmq" >> .env
 	sed -i '/RABBITMQ_SERVER_REPLICAS/d' .env
 	echo "RABBITMQ_SERVER_REPLICAS=1" >> .env
 	echo "CONNECTION_STRING_FROM=$$RABBITMQ_URL" >> .env
@@ -91,6 +91,8 @@ ifeq (rabbitmq, $(PRODUCER))
 	echo "RABBITMQ_SERVER_REPLICAS=1" >> .env
 	echo "CONNECTION_STRING_TO=$$RABBITMQ_URL" >> .env
 endif
+
+	sleep 1
 
 	docker-compose --env-file .env build
 	docker-compose --env-file .env up

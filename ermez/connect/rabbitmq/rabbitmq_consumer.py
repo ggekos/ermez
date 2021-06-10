@@ -20,4 +20,4 @@ class Consumer:
 
     def get_message(self):
         for body in self.client.consume(self.query["topic"][0]):
-            yield body
+            yield str(body)
