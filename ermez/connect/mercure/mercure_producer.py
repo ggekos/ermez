@@ -1,9 +1,10 @@
 from pymercure.publisher.sync import SyncPublisher
 from pymercure.message import Message
 from urllib.parse import urlparse, parse_qs
+from ermez.connect.abstract_producer import AbstractProducer
 
 
-class Producer:
+class Producer(AbstractProducer):
     def __init__(self, uri: str, credential: str):
         self.uri_parsed = urlparse(uri)
         self.producer = SyncPublisher(

@@ -1,8 +1,9 @@
 import sseclient, requests
 from urllib.parse import urlparse, parse_qs
+from ermez.connect.abstract_consumer import AbstractConsumer
 
 
-class Consumer:
+class Consumer(AbstractConsumer):
     def __init__(self, uri: str, credential):
         self.uri_parsed = urlparse(uri)
 

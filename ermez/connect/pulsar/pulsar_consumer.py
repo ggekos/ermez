@@ -1,8 +1,9 @@
 import pulsar
 from urllib.parse import urlparse, parse_qs
+from ermez.connect.abstract_consumer import AbstractConsumer
 
 
-class Consumer:
+class Consumer(AbstractConsumer):
     def __init__(self, uri: str, credential):
         uri_parsed = urlparse(uri)
         query = parse_qs(uri_parsed.query)
