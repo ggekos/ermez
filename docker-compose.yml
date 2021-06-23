@@ -13,6 +13,7 @@ services:
             - PULSAR_JWT=${PULSAR_JWT}
             - RABBITMQ_URL=${RABBITMQ_URL}
             - SQS_URL=${SQS_URL}
+            - SQS_CREDENTIALS=${SQS_CREDENTIALS}
         volumes:
             - $PWD/producer:/home/app
 

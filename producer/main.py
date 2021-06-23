@@ -78,22 +78,27 @@ def producer_sqs():
     uri_parsed = urlparse(os.environ["SQS_URL"])
     query = parse_qs(uri_parsed.query)
 
-    client = boto3.resource(
+    crendentials = (os.environ["SQS_CREDENTIALS"]).split(",")
+    credentials_dict = {}
+    for credential in crendentials:
+        credentials_dict[credential.split(":")[0]] = credential.split(":")[1]
+
+    resource = boto3.resource(
         "sqs",
         endpoint_url=uri_parsed.scheme + "://" + uri_parsed.netloc,
-        region_name="elasticmq",
-        aws_secret_access_key="x",
-        aws_access_key_id="x",
-        use_ssl=False,
+        region_name=credentials_dict["region_name"],
+        aws_secret_access_key=credentials_dict["aws_secret_access_key"],
+        aws_access_key_id=credentials_dict["aws_access_key_id"],
+        use_ssl=credentials_dict["aws_access_key_id"] == "true",
     )
-
-    queue = client.get_queue_by_name(QueueName=query["queue"][0])
+    client = resource.meta.client
+    queue_url = client.get_queue_url(QueueName=query["queue"][0])
 
     i = 0
 
     while True:
-        queue.send_message(
-            DelaySeconds=10,
+        client.send_message(
+            QueueUrl=queue_url["QueueUrl"],
             MessageAttributes={},
             MessageBody=("message produce: " + str(i)),
         )

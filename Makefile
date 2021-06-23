@@ -38,6 +38,7 @@ ifeq (sqs, $(CONSUMER))
 	sed -i '/SQS_SERVER_REPLICAS/d' .env
 	echo "SQS_SERVER_REPLICAS=1" >> .env
 	echo "CONNECTION_STRING_FROM=$$SQS_URL" >> .env
+	echo "CREDENTIALS_FROM=$$SQS_CREDENTIALS" >> .env
 endif
 
 ifeq (mercure, $(CONSUMER))
@@ -70,6 +71,7 @@ ifeq (sqs, $(PRODUCER))
 	sed -i '/SQS_SERVER_REPLICAS/d' .env
 	echo "SQS_SERVER_REPLICAS=1" >> .env
 	echo "CONNECTION_STRING_TO=$$SQS_URL" >> .env
+	echo "CREDENTIALS_TO=$$SQS_CREDENTIALS" >> .env
 endif
 
 ifeq (mercure, $(PRODUCER))

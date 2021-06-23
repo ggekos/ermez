@@ -20,7 +20,7 @@ Pulsar : pulsar://pulsar_server:6650?topic=topic alongside with a jwt
 
 Rabbitmq : amqp://guest:guest@rabbit:5672/%2F?topic=topic&exchange=exchange&routing_key=routing_key
 
-SQS : http://sqsserver:9324?queue=default alongside with aws credentials
+SQS : http://sqsserver:9324?queue=default alongside with aws credentials (region_name:X,aws_secret_access_key:Y,aws_access_key_id:Z,use_ssl)
 
 ## Install
 

@@ -39,6 +39,9 @@ class conn:
         if len(protocol) == 0 or protocol not in ["http", "pulsar", "amqp"]:
             raise Exception("Connection error")
 
+        if str(self.uri_parsed.port) == "9324":
+            return "sqs"
+
         if protocol == "http":
             return "mercure"
 
